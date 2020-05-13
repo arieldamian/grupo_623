@@ -1,0 +1,2 @@
+rootProject.name='FitSOA'
+include ':app'
