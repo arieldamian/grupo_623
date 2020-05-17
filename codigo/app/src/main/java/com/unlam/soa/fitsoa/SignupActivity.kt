@@ -101,7 +101,7 @@ class SignupActivity : AppCompatActivity() {
                 call: Call<ResponseSignup>?,
                 response: Response<ResponseSignup>?
             ) {
-                if (response!!.body() == null || response.code() == 404) {
+                if (response!!.body() == null || response.code() >= 400) {
                     _progressBar!!.visibility = View.INVISIBLE;
                     onSignupFailed()
                     return

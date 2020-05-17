@@ -10,6 +10,7 @@ import com.unlam.soa.api.ApiInterface
 import com.unlam.soa.api.ResponseLogin
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.SignInBody
+import com.unlam.soa.sharedPreferences.AppPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -84,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
                 val responseBody = response!!.body() as ResponseLogin
 
                 if (responseBody.state == "success") {
-                    onLoginSuccess()
+                    onLoginSuccess(responseBody.token)
                 } else {
                     Toast.makeText(this@LoginActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
                     _loginButton!!.isEnabled = true
@@ -100,8 +101,10 @@ class LoginActivity : AppCompatActivity() {
         moveTaskToBack(true)
     }
 
-    private fun onLoginSuccess() {
+    private fun onLoginSuccess(token : String) {
         _loginButton!!.isEnabled = true
+        AppPreferences.isLogged = true
+        AppPreferences.token = token
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
