@@ -2,6 +2,7 @@ package com.unlam.soa.fitsoa
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -105,11 +106,12 @@ class SignupActivity : AppCompatActivity() {
                     onSignupFailed()
                     return
                 }
-                val responseBody = response!!.body() as ResponseSignup
+                val responseBody = response.body() as ResponseSignup
 
                 if (responseBody.state == "success") {
                     onSignupSuccess()
                 } else {
+                    Log.d("SignupActivity", "onResponse NOT success executed")
                     Toast.makeText(this@SignupActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
                     _signupButton!!.isEnabled = true
                 }
