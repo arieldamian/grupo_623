@@ -2,8 +2,8 @@ package com.unlam.soa.fitsoa
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.unlam.soa.api.ApiInterface
@@ -46,15 +46,12 @@ class LoginActivity: AppCompatActivity() {
 
         _signupLink!!.setOnClickListener {
             // Start the Signup activity
-            val intent = Intent(applicationContext, SignupActivity::class.java)
-            startActivityForResult(intent, REQUEST_SIGNUP)
+            startActivity(Intent(this, SignupActivity::class.java))
             finish()
         }
     }
 
     private fun login(){
-        Log.d(TAG, "Login")
-
         if (!validate()) {
             onLoginFailed()
             return
@@ -62,20 +59,21 @@ class LoginActivity: AppCompatActivity() {
 
         _loginButton!!.isEnabled = false
         _progressBar!!.visibility = View.VISIBLE;
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         val email = _emailText!!.text.toString()
         val password = _passwordText!!.text.toString()
+
+
         val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
         val signInInfo = SignInBody(email, password)
 
         retIn.signin(signInInfo).enqueue(object : Callback<ResponseLogin> {
              override fun onFailure(call: Call<ResponseLogin>?, t: Throwable) {
-                 Toast.makeText(
-                     this@LoginActivity,
-                     t.message,
-                     Toast.LENGTH_SHORT
-                 ).show()
-            }
+                 onLoginFailed()
+                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                 _progressBar!!.visibility = View.INVISIBLE;
+             }
              override fun onResponse(call: Call<ResponseLogin>?, response: Response<ResponseLogin>?) {
                  val responseBody =  response!!.body() as ResponseLogin
 
@@ -86,7 +84,8 @@ class LoginActivity: AppCompatActivity() {
                      _loginButton!!.isEnabled = true
                  }
                  _progressBar!!.visibility = View.INVISIBLE;
-            }
+                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+             }
         })
     }
 
@@ -97,8 +96,8 @@ class LoginActivity: AppCompatActivity() {
 
     private fun onLoginSuccess() {
         _loginButton!!.isEnabled = true
-        // finish()
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun onLoginFailed() {
@@ -114,24 +113,19 @@ class LoginActivity: AppCompatActivity() {
         val password = _passwordText!!.text.toString()
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText!!.error = "enter a valid email address"
+            _emailText!!.error = "Enter a valid email address"
             valid = false
         } else {
             _emailText!!.error = null
         }
 
-        if (password.isEmpty() || password.length < 4 || password.length > 20) {
-            _passwordText!!.error = "between 4 and 20 alphanumeric characters"
+        if (password.isEmpty() || password.length < 8 || password.length > 20) {
+            _passwordText!!.error = "between 8 and 20 alphanumeric characters"
             valid = false
         } else {
             _passwordText!!.error = null
         }
 
         return valid
-    }
-
-    companion object {
-        private val TAG = "LoginActivity"
-        private val REQUEST_SIGNUP = 0
     }
 }
