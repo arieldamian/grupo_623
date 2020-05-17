@@ -2,6 +2,7 @@ package com.unlam.soa.fitsoa
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -92,6 +93,7 @@ class SignupActivity : AppCompatActivity() {
 
         retIn.registerUser(signUpInfo).enqueue(object : Callback<ResponseSignup> {
             override fun onFailure(call: Call<ResponseSignup>?, t: Throwable) {
+                Log.d("SignupActivity", "onFailure called")
                 onSignupFailed()
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
@@ -100,11 +102,14 @@ class SignupActivity : AppCompatActivity() {
                 call: Call<ResponseSignup>?,
                 response: Response<ResponseSignup>?
             ) {
+                Log.d("SignupActivity", "onResponse called")
                 val responseBody = response!!.body() as ResponseSignup
 
                 if (responseBody.state == "success") {
+                    Log.d("SignupActivity", "onResponse success executed")
                     onSignupSuccess()
                 } else {
+                    Log.d("SignupActivity", "onResponse NOT success executed")
                     Toast.makeText(this@SignupActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
                     _signupButton!!.isEnabled = true
                 }
