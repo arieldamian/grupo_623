@@ -1,11 +1,9 @@
 package com.unlam.soa.api
 
-import com.google.gson.JsonObject
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.models.UserBody
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -24,6 +22,13 @@ data class ResponseLogin(
     val token: String
 )
 
+data class ResponseSignup(
+    val state: String,
+    val env: String,
+    val token: String,
+    val msg: String
+)
+
 interface ApiInterface {
     @Headers(CONTENT_TYPE_HEADER)
     @POST("login")
@@ -31,14 +36,12 @@ interface ApiInterface {
 
     @Headers(CONTENT_TYPE_HEADER)
     @POST("register")
-    fun registerUser(@Body info: UserBody): Call<ResponseBody>
+    fun registerUser(@Body info: UserBody): Call<ResponseSignup>
 }
 
 class RetrofitInstance {
     companion object {
         private const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
-        //private val dotenv = dotenv()
-        // val API_ENV = dotenv["API_ENV"]
 
         val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
             this.level = HttpLoggingInterceptor.Level.BODY
