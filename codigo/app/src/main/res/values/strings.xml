@@ -4,4 +4,6 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="login">Login</string>
+    <string name="todo">TODO</string>
+    <string name="no_account_yet_create_one">No account yet? Create one</string>
 </resources>

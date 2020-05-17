@@ -1,5 +1,4 @@
 package com.unlam.soa.fitsoa
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 

@@ -79,8 +79,6 @@ class SignupActivity: AppCompatActivity() {
 
     fun onSignupSuccess() {
         _signupButton!!.isEnabled = true
-//        setResult(Activity.RESULT_OK, null)
-//        finish()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
