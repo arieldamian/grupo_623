@@ -2,17 +2,25 @@ package com.unlam.soa.fitsoa
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.unlam.soa.api.ApiInterface
+import com.unlam.soa.api.ResponseLogin
+import com.unlam.soa.api.ResponseSignup
+import com.unlam.soa.api.RetrofitInstance
+import com.unlam.soa.models.UserBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SignupActivity: AppCompatActivity() {
 
     private var _nameText: EditText? = null
-    private var _addressText: EditText? = null
+    private var _lastName: EditText? = null
     private var _emailText: EditText? = null
-    private var _mobileText: EditText? = null
+    private var _dniText: EditText? = null
     private var _passwordText: EditText? = null
     private var _reEnterPasswordText: EditText? = null
     private var _signupButton: Button? = null
@@ -23,18 +31,28 @@ class SignupActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        setUpView()
+    }
+    
+    private fun setUpView() {
         _nameText = findViewById<EditText>(R.id.input_name) as EditText
-        _addressText = findViewById<EditText>(R.id.input_address) as EditText
+        _lastName = findViewById<EditText>(R.id.input_lastname) as EditText
         _emailText = findViewById<EditText>(R.id.input_email) as EditText
-        _mobileText = findViewById<EditText>(R.id.input_mobile) as EditText
+        _dniText = findViewById<EditText>(R.id.input_dni) as EditText
         _passwordText = findViewById<EditText>(R.id.input_password) as EditText
         _reEnterPasswordText = findViewById<EditText>(R.id.input_reEnterPassword) as EditText
         _progressBar = findViewById<ProgressBar>(R.id.progressbar) as ProgressBar
 
         _signupButton = findViewById<Button>(R.id.btn_signup) as Button
         _loginLink = findViewById<TextView>(R.id.link_login) as TextView
-
-        _signupButton!!.setOnClickListener { signup() }
+        
+        setUpListeners()
+    }
+    
+    private fun setUpListeners() {
+        _signupButton!!.setOnClickListener {
+            signup()
+        }
 
         _loginLink!!.setOnClickListener {
             // Finish the registration screen and return to the Login activity
@@ -46,56 +64,71 @@ class SignupActivity: AppCompatActivity() {
     }
 
     fun signup() {
-        Log.d(TAG, "Signup")
-
         if (!validate()) {
             onSignupFailed()
             return
         }
 
         _signupButton!!.isEnabled = false
-
         _progressBar!!.visibility = View.VISIBLE;
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         val name = _nameText!!.text.toString()
-        val address = _addressText!!.text.toString()
+        val lastname = _lastName!!.text.toString()
         val email = _emailText!!.text.toString()
-        val mobile = _mobileText!!.text.toString()
+        val dni = _dniText!!.text.toString().toInt()
         val password = _passwordText!!.text.toString()
-        val reEnterPassword = _reEnterPasswordText!!.text.toString()
 
-        // TODO: Implement your own signup logic here.
+        val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
+        val signUpInfo = UserBody(
+            name,
+            lastname,
+            dni,
+            email,
+            password
+        )
 
-        android.os.Handler().postDelayed(
-            {
-                // On complete call either onSignupSuccess or onSignupFailed
-                // depending on success
-                onSignupSuccess()
-                // onSignupFailed();
-                _progressBar!!.visibility = View.INVISIBLE;
-            }, 3000)
+        retIn.registerUser(signUpInfo).enqueue(object : Callback<ResponseSignup> {
+             override fun onFailure(call: Call<ResponseSignup>?, t: Throwable) {
+                 onSignupFailed()
+                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+             override fun onResponse(call: Call<ResponseSignup>?, response: Response<ResponseSignup>?) {
+                 val responseBody =  response!!.body() as ResponseSignup
+
+                 if (responseBody.state == "success") {
+                     onSignupSuccess()
+                } else {
+                    Toast.makeText(this@SignupActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
+                     _signupButton!!.isEnabled = true
+                 }
+                 _progressBar!!.visibility = View.INVISIBLE;
+                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
+        })
+        
     }
 
 
-    fun onSignupSuccess() {
+    private fun onSignupSuccess() {
         _signupButton!!.isEnabled = true
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
-    fun onSignupFailed() {
-        Toast.makeText(baseContext, "Login failed", Toast.LENGTH_LONG).show()
+    private fun onSignupFailed() {
+        Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
 
         _signupButton!!.isEnabled = true
     }
 
-    fun validate(): Boolean {
+    private fun validate(): Boolean {
         var valid = true
 
         val name = _nameText!!.text.toString()
-        val address = _addressText!!.text.toString()
+        val lastname = _lastName!!.text.toString()
         val email = _emailText!!.text.toString()
-        val mobile = _mobileText!!.text.toString()
+        val dni = _dniText!!.text.toString()
         val password = _passwordText!!.text.toString()
         val reEnterPassword = _reEnterPasswordText!!.text.toString()
 
@@ -106,11 +139,11 @@ class SignupActivity: AppCompatActivity() {
             _nameText!!.error = null
         }
 
-        if (address.isEmpty()) {
-            _addressText!!.error = "Enter Valid Address"
+        if (lastname.isEmpty() || lastname.length < 3) {
+            _lastName!!.error = "at least 3 characters"
             valid = false
         } else {
-            _addressText!!.error = null
+            _lastName!!.error = null
         }
 
 
@@ -121,21 +154,21 @@ class SignupActivity: AppCompatActivity() {
             _emailText!!.error = null
         }
 
-        if (mobile.isEmpty() || mobile.length != 10) {
-            _mobileText!!.error = "Enter Valid Mobile Number"
+        if (dni.isEmpty() || dni.length < 7 || dni.length > 8) {
+            _dniText!!.error = "Enter a valid DNI"
             valid = false
         } else {
-            _mobileText!!.error = null
+            _dniText!!.error = null
         }
 
-        if (password.isEmpty() || password.length < 4 || password.length > 10) {
-            _passwordText!!.error = "between 4 and 10 alphanumeric characters"
+        if (password.isEmpty() || password.length < 8 || password.length > 20) {
+            _passwordText!!.error = "between 8 and 20 alphanumeric characters"
             valid = false
         } else {
             _passwordText!!.error = null
         }
 
-        if (reEnterPassword.isEmpty() || reEnterPassword.length < 4 || reEnterPassword.length > 10 || reEnterPassword != password) {
+        if (reEnterPassword.isEmpty() || reEnterPassword != password) {
             _reEnterPasswordText!!.error = "Password Do not match"
             valid = false
         } else {
@@ -143,9 +176,5 @@ class SignupActivity: AppCompatActivity() {
         }
 
         return valid
-    }
-
-    companion object {
-        private val TAG = "SignupActivity"
     }
 }
