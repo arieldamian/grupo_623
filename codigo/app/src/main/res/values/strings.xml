@@ -6,4 +6,14 @@
     <string name="login">Login</string>
     <string name="todo">TODO</string>
     <string name="no_account_yet_create_one">No account yet? Create one</string>
+    <string name="fitsoa">FitSOA</string>
+    <string name="complet_tus_datos">Completá tus datos</string>
+    <string name="name">Nombre</string>
+    <string name="lastname">Apellido</string>
+    <string name="email">Email</string>
+    <string name="document_number">Numero de documento</string>
+    <string name="password">Contraseña</string>
+    <string name="re_enter_password">Repetir contraseña</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="already_a_member_login">¿Ya tenes una cuenta? Ingresá</string>
 </resources>
