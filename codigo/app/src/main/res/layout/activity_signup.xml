@@ -28,14 +28,14 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="12dp"
                     app:srcCompat="@drawable/kotlindroider"
-                    android:contentDescription="TODO" />
+                    android:contentDescription="@string/fitsoa" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
-                    android:text="Text"
+                    android:text="@string/complet_tus_datos"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -51,11 +51,11 @@
                         android:id="@+id/input_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Name"
+                        android:hint="@string/name"
                         android:inputType="textPersonName" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Address Label -->
+                <!-- Lastname Label -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -63,10 +63,10 @@
                     android:layout_marginTop="8dp">
 
                     <EditText
-                        android:id="@+id/input_address"
+                        android:id="@+id/input_lastname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Address"
+                        android:hint="@string/lastname"
                         android:inputType="textPostalAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,7 +82,7 @@
                         android:id="@+id/input_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         android:inputType="textEmailAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,10 +95,10 @@
                     android:layout_marginTop="8dp">
 
                     <EditText
-                        android:id="@+id/input_mobile"
+                        android:id="@+id/input_dni"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Mobile Number"
+                        android:hint="@string/document_number"
                         android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -113,7 +113,7 @@
                         android:id="@+id/input_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,7 +128,7 @@
                         android:id="@+id/input_reEnterPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Re-enter Password"
+                        android:hint="@string/re_enter_password"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -140,7 +140,7 @@
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="24dp"
                     android:padding="12dp"
-                    android:text="Create Account" />
+                    android:text="@string/create_account" />
 
                 <TextView
                     android:id="@+id/link_login"
@@ -148,8 +148,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
                     android:gravity="center"
-                    android:text="Already a member? Login"
-                    android:textSize="16dip" />
+                    android:text="@string/already_a_member_login"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
