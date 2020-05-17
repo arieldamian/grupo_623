@@ -14,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginActivity: AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     private var _emailText: EditText? = null
     private var _passwordText: EditText? = null
@@ -51,7 +51,7 @@ class LoginActivity: AppCompatActivity() {
         }
     }
 
-    private fun login(){
+    private fun login() {
         if (!validate()) {
             onLoginFailed()
             return
@@ -59,33 +59,39 @@ class LoginActivity: AppCompatActivity() {
 
         _loginButton!!.isEnabled = false
         _progressBar!!.visibility = View.VISIBLE;
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        );
 
         val email = _emailText!!.text.toString()
         val password = _passwordText!!.text.toString()
-
 
         val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
         val signInInfo = SignInBody(email, password)
 
         retIn.signin(signInInfo).enqueue(object : Callback<ResponseLogin> {
-             override fun onFailure(call: Call<ResponseLogin>?, t: Throwable) {
-                 onLoginFailed()
-                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                 _progressBar!!.visibility = View.INVISIBLE;
-             }
-             override fun onResponse(call: Call<ResponseLogin>?, response: Response<ResponseLogin>?) {
-                 val responseBody =  response!!.body() as ResponseLogin
+            override fun onFailure(call: Call<ResponseLogin>?, t: Throwable) {
+                onLoginFailed()
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                _progressBar!!.visibility = View.INVISIBLE;
+            }
 
-                 if (responseBody.state == "success") {
+            override fun onResponse(
+                call: Call<ResponseLogin>?,
+                response: Response<ResponseLogin>?
+            ) {
+                val responseBody = response!!.body() as ResponseLogin
+
+                if (responseBody.state == "success") {
                     onLoginSuccess()
                 } else {
                     Toast.makeText(this@LoginActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
-                     _loginButton!!.isEnabled = true
-                 }
-                 _progressBar!!.visibility = View.INVISIBLE;
-                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-             }
+                    _loginButton!!.isEnabled = true
+                }
+                _progressBar!!.visibility = View.INVISIBLE;
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            }
         })
     }
 

@@ -7,7 +7,6 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.unlam.soa.api.ApiInterface
-import com.unlam.soa.api.ResponseLogin
 import com.unlam.soa.api.ResponseSignup
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.UserBody
@@ -15,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignupActivity: AppCompatActivity() {
+class SignupActivity : AppCompatActivity() {
 
     private var _nameText: EditText? = null
     private var _lastName: EditText? = null
@@ -33,7 +32,7 @@ class SignupActivity: AppCompatActivity() {
 
         setUpView()
     }
-    
+
     private fun setUpView() {
         _nameText = findViewById<EditText>(R.id.input_name) as EditText
         _lastName = findViewById<EditText>(R.id.input_lastname) as EditText
@@ -45,10 +44,10 @@ class SignupActivity: AppCompatActivity() {
 
         _signupButton = findViewById<Button>(R.id.btn_signup) as Button
         _loginLink = findViewById<TextView>(R.id.link_login) as TextView
-        
+
         setUpListeners()
     }
-    
+
     private fun setUpListeners() {
         _signupButton!!.setOnClickListener {
             signup()
@@ -71,7 +70,10 @@ class SignupActivity: AppCompatActivity() {
 
         _signupButton!!.isEnabled = false
         _progressBar!!.visibility = View.VISIBLE;
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        );
 
         val name = _nameText!!.text.toString()
         val lastname = _lastName!!.text.toString()
@@ -89,26 +91,34 @@ class SignupActivity: AppCompatActivity() {
         )
 
         retIn.registerUser(signUpInfo).enqueue(object : Callback<ResponseSignup> {
-             override fun onFailure(call: Call<ResponseSignup>?, t: Throwable) {
-                 onSignupFailed()
-                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            override fun onFailure(call: Call<ResponseSignup>?, t: Throwable) {
+                onSignupFailed()
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
-             override fun onResponse(call: Call<ResponseSignup>?, response: Response<ResponseSignup>?) {
-                 val responseBody =  response!!.body() as ResponseSignup
 
-                 if (responseBody.state == "success") {
-                     onSignupSuccess()
+            override fun onResponse(
+                call: Call<ResponseSignup>?,
+                response: Response<ResponseSignup>?
+            ) {
+                if (response!!.body() == null || response.code() == 404) {
+                    _progressBar!!.visibility = View.INVISIBLE;
+                    onSignupFailed()
+                    return
+                }
+                val responseBody = response!!.body() as ResponseSignup
+
+                if (responseBody.state == "success") {
+                    onSignupSuccess()
                 } else {
                     Toast.makeText(this@SignupActivity, responseBody.msg, Toast.LENGTH_SHORT).show()
-                     _signupButton!!.isEnabled = true
-                 }
-                 _progressBar!!.visibility = View.INVISIBLE;
-                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    _signupButton!!.isEnabled = true
+                }
+                _progressBar!!.visibility = View.INVISIBLE;
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
         })
-        
-    }
 
+    }
 
     private fun onSignupSuccess() {
         _signupButton!!.isEnabled = true
@@ -118,7 +128,7 @@ class SignupActivity: AppCompatActivity() {
 
     private fun onSignupFailed() {
         Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
-
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         _signupButton!!.isEnabled = true
     }
 
