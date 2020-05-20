@@ -5,17 +5,18 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.unlam.soa.api.ApiInterface
+import com.unlam.soa.api.BaseResponse
 import com.unlam.soa.api.ResponseLogin
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.sharedPreferences.AppPreferences
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private var _emailText: EditText? = null
     private var _passwordText: EditText? = null
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
     private var _signupLink: TextView? = null
     private var _progressBar: ProgressBar? = null
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -74,15 +75,19 @@ class LoginActivity : AppCompatActivity() {
         retIn.signin(signInInfo).enqueue(object : Callback<ResponseLogin> {
             override fun onFailure(call: Call<ResponseLogin>?, t: Throwable) {
                 onLoginFailed()
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                _progressBar!!.visibility = View.INVISIBLE;
             }
 
             override fun onResponse(
                 call: Call<ResponseLogin>?,
                 response: Response<ResponseLogin>?
             ) {
-                val responseBody = response!!.body() as ResponseLogin
+                if (response!!.body() == null || response.code() >= 400) {
+                    val errorBody = JSONObject(response.errorBody()!!.string())
+                    onLoginFailed(errorBody.get("msg") as String?)
+                    return
+                }
+
+                val responseBody = response.body() as ResponseLogin
 
                 if (responseBody.state == "success") {
                     onLoginSuccess(responseBody.token)
@@ -109,8 +114,10 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun onLoginFailed() {
-        Toast.makeText(baseContext, "Login failed", Toast.LENGTH_LONG).show()
+    private fun onLoginFailed(msg: String? = "Login Failed with default message") {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        _progressBar!!.visibility = View.INVISIBLE;
+        Toast.makeText(baseContext, msg, Toast.LENGTH_LONG).show()
 
         _loginButton!!.isEnabled = true
     }
