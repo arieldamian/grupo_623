@@ -6,16 +6,17 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.unlam.soa.api.ApiInterface
+import com.unlam.soa.api.BaseResponse
 import com.unlam.soa.api.ResponseSignup
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.UserBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignupActivity : AppCompatActivity() {
+class SignupActivity : BaseActivity() {
 
     private var _nameText: EditText? = null
     private var _lastName: EditText? = null
@@ -27,7 +28,7 @@ class SignupActivity : AppCompatActivity() {
     private var _loginLink: TextView? = null
     private var _progressBar: ProgressBar? = null
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
@@ -94,7 +95,6 @@ class SignupActivity : AppCompatActivity() {
         retIn.registerUser(signUpInfo).enqueue(object : Callback<ResponseSignup> {
             override fun onFailure(call: Call<ResponseSignup>?, t: Throwable) {
                 onSignupFailed()
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
 
             override fun onResponse(
@@ -102,10 +102,11 @@ class SignupActivity : AppCompatActivity() {
                 response: Response<ResponseSignup>?
             ) {
                 if (response!!.body() == null || response.code() >= 400) {
-                    _progressBar!!.visibility = View.INVISIBLE;
-                    onSignupFailed()
+                    val errorBody = JSONObject(response.errorBody()!!.string())
+                    onSignupFailed(errorBody.get("msg") as String?)
                     return
                 }
+
                 val responseBody = response.body() as ResponseSignup
 
                 if (responseBody.state == "success") {
@@ -128,8 +129,9 @@ class SignupActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun onSignupFailed() {
-        Toast.makeText(baseContext, "Register failed", Toast.LENGTH_LONG).show()
+    private fun onSignupFailed(msg: String? = "Register failed with default message ") {
+        _progressBar!!.visibility = View.INVISIBLE;
+        Toast.makeText(baseContext, msg, Toast.LENGTH_LONG).show()
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         _signupButton!!.isEnabled = true
     }
