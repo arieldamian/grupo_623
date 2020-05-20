@@ -18,7 +18,11 @@ open class BaseActivity : AppCompatActivity() {
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (!Utils.isOnline(context)) {
-                Toast.makeText(this@BaseActivity, "No tenes conexión a internet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@BaseActivity,
+                    "No tenes conexión a internet",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

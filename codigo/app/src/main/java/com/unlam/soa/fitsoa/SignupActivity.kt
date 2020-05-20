@@ -7,7 +7,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.unlam.soa.api.ApiInterface
-import com.unlam.soa.api.BaseResponse
 import com.unlam.soa.api.ResponseSignup
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.UserBody

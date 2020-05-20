@@ -6,7 +6,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.unlam.soa.api.ApiInterface
-import com.unlam.soa.api.BaseResponse
 import com.unlam.soa.api.ResponseLogin
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.SignInBody
@@ -106,7 +105,7 @@ class LoginActivity : BaseActivity() {
         moveTaskToBack(true)
     }
 
-    private fun onLoginSuccess(token : String) {
+    private fun onLoginSuccess(token: String) {
         _loginButton!!.isEnabled = true
         AppPreferences.isLogged = true
         AppPreferences.token = token
