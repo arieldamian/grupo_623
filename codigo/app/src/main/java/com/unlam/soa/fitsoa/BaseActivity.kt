@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.soywiz.klock.DateTime
 import com.unlam.soa.utils.Utils
 
 open class BaseActivity : AppCompatActivity() {
@@ -27,7 +28,9 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    public fun getToday(){
+    public fun getDateOfYear(): Int {
+        val time = DateTime.now()
+        return time.dayOfYear
     }
 
     override fun onStart() {
