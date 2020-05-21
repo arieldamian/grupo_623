@@ -1,2 +1,3 @@
 rootProject.name='FitSOA'
 include ':app'
+enableFeaturePreview('GRADLE_METADATA')

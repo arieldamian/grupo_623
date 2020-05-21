@@ -27,6 +27,9 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    public fun getToday(){
+    }
+
     override fun onStart() {
         super.onStart()
 

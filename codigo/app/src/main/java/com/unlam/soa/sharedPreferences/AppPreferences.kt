@@ -11,6 +11,9 @@ object AppPreferences {
     //SharedPreferences variables
     private val IS_LOGGED = Pair("is_logged", false)
     private val TOKEN = Pair("token", "")
+    private val STEPS_PER_DAY = Pair("steps_per_day", "")
+    private val TOTAL_STEPS = Pair("total_steps", 0.0f)
+
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
@@ -34,5 +37,17 @@ object AppPreferences {
         get() = preferences.getString(TOKEN.first, TOKEN.second) ?: ""
         set(value) = preferences.edit {
             it.putString(TOKEN.first, value)
+        }
+
+    var totalSteps: Float
+        get() = (preferences.getFloat(TOTAL_STEPS.first, TOTAL_STEPS.second) ?: "") as Float
+        set(value) = preferences.edit {
+                it.putFloat(TOTAL_STEPS.first, value)
+        }
+
+    var stepsPerDay: String
+        get() = preferences.getString(STEPS_PER_DAY.first, STEPS_PER_DAY.second) ?: ""
+        set(value) = preferences.edit {
+            it.putString(STEPS_PER_DAY.first, value)
         }
 }
