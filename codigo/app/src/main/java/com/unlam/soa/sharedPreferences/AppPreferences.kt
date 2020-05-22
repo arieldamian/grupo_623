@@ -13,6 +13,8 @@ object AppPreferences {
     private val TOKEN = Pair("token", "")
     private val STEPS_PER_DAY = Pair("steps_per_day", "")
     private val TOTAL_STEPS = Pair("total_steps", 0.0f)
+    private val LAST_DAY_STEPS = Pair("last_day_steps", 0.0f)
+
 
 
     fun init(context: Context) {
@@ -43,6 +45,12 @@ object AppPreferences {
         get() = (preferences.getFloat(TOTAL_STEPS.first, TOTAL_STEPS.second) ?: "") as Float
         set(value) = preferences.edit {
                 it.putFloat(TOTAL_STEPS.first, value)
+        }
+
+    var lastDaySteps: Float
+        get() = (preferences.getFloat(LAST_DAY_STEPS.first, LAST_DAY_STEPS.second) ?: "") as Float
+        set(value) = preferences.edit {
+            it.putFloat(LAST_DAY_STEPS.first, value)
         }
 
     var stepsPerDay: String

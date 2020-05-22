@@ -24,13 +24,13 @@ import org.eazegraph.lib.charts.PieChart
 import org.eazegraph.lib.models.PieModel
 import java.lang.reflect.Type
 import java.util.*
+import kotlin.math.absoluteValue
 
 
 class MainActivity : BaseActivity(), SensorEventListener {
 
     private var _stepsChart: PieChart? = null
     private var running = false
-    private var yesterdaySteps = 0.0f
     private var sensorManager: SensorManager? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -62,23 +62,18 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
     }
 
-    fun getLastSteps(){
+    private fun getLastSteps(){
         if(AppPreferences.stepsPerDay != ""){
             val stepsPerDay:  TreeMap<Int, Float> = getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-            val firstEntry = stepsPerDay.firstEntry()
             val dayOfYear: Int = getDateOfYear()
 
-            if(firstEntry!!.key == dayOfYear)
-                yesterdaySteps = stepsPerDay.values.elementAt(1)
-
-            else yesterdaySteps = stepsPerDay.values.elementAt(0)
-
+            if(!stepsPerDay.containsKey(dayOfYear))
+                AppPreferences.lastDaySteps = stepsPerDay.values.elementAt(0).absoluteValue
         }
     }
 
     override fun onResume() {
         super.onResume()
-        getLastSteps()
         checkLogin()
 
         running = true
@@ -89,6 +84,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         } else {
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
         }
+        getLastSteps()
     }
 
     override fun onPause() {
@@ -108,10 +104,11 @@ class MainActivity : BaseActivity(), SensorEventListener {
     private fun checkSteps(steps : Float){
         val dayOfYear: Int = getDateOfYear()
         val stepsPerDay:  TreeMap<Int, Float> = getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
+        val realSteps: Float = if(steps < AppPreferences.totalSteps) AppPreferences.totalSteps else steps
         if(AppPreferences.stepsPerDay != "") {
-            stepsPerDay[dayOfYear] = steps - yesterdaySteps
+            stepsPerDay[dayOfYear] = realSteps - AppPreferences.lastDaySteps
         }else {
-            stepsPerDay[dayOfYear] = steps
+            stepsPerDay[dayOfYear] = realSteps
         }
         updateStepsPerDay(stepsPerDay)
     }
