@@ -67,7 +67,13 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 Color.parseColor("#6200EE")
             )
         )
-        _stepsChart?.addPieSlice(PieModel("Today Steps", 0.0f, Color.parseColor("#000000")))
+        _stepsChart?.addPieSlice(
+            PieModel(
+                "Today Steps",
+                0.0f,
+                Color.parseColor("#000000")
+            )
+        )
         _stepsChart?.startAnimation()
         _barChart?.startAnimation()
     }
@@ -176,7 +182,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         } else {
             stepsPerDay[dayOfYear] = realSteps
         }
-        if(stepsPerDay[dayOfYear]!! > 500.0f)
+        if (stepsPerDay[dayOfYear]!! > 500.0f)
             sendEvent("Sensor", "ACTIVO", "Step sensor reach 100 steps in a day")
 
         storeStepsPerDay(stepsPerDay)
