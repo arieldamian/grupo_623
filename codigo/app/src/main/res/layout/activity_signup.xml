@@ -37,7 +37,6 @@
                     android:gravity="center_horizontal"
                     android:text="@string/complet_tus_datos"
                     android:textAllCaps="true"
-                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <!-- Name Label -->

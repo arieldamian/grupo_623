@@ -36,7 +36,6 @@
                     android:gravity="center_horizontal"
                     android:text="@string/testtest"
                     android:textAllCaps="true"
-                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <!--  Email  -->
