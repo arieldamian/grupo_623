@@ -28,7 +28,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    public fun getDateOfYear(): Int {
+    fun getDateOfYear(): Int {
         val time = DateTime.now()
         return time.dayOfYear
     }

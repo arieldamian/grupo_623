@@ -26,7 +26,6 @@ android {
             it.buildConfigField "String", "API_ENV", "\"TEST\""
         }
     }
-
 }
 
 dependencies {
