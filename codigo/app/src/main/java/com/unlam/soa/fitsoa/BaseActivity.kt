@@ -1,20 +1,19 @@
 package com.unlam.soa.fitsoa
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.soywiz.klock.DateTime
 import com.unlam.soa.api.ApiInterface
 import com.unlam.soa.api.ResponseEvent
-import com.unlam.soa.api.ResponseLogin
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.EventBody
-import com.unlam.soa.models.SignInBody
 import com.unlam.soa.utils.Utils
 import org.json.JSONObject
 import retrofit2.Call
