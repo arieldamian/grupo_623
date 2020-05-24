@@ -34,7 +34,9 @@ open class BaseActivity : AppCompatActivity() {
                     "No tenes conexión a internet",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
+                sendEvent("Internet", "ACTIVO", "Device not connected to Internet")
+
+            }else sendEvent("Internet", "ACTIVO", "Device connected to Internet")
         }
     }
 
