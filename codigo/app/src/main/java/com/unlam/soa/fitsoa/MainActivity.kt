@@ -1,6 +1,7 @@
 package com.unlam.soa.fitsoa
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -26,11 +28,15 @@ import java.lang.reflect.Type
 import java.util.*
 import kotlin.math.absoluteValue
 
+val STEPS_KM = 0.00076
+
 
 class MainActivity : BaseActivity(), SensorEventListener {
 
     private var _stepsChart: PieChart? = null
     private var running = false
+    private var _averageText : TextView? = null
+    private var _totalStepsText : TextView? = null
     private var sensorManager: SensorManager? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -40,6 +46,9 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
         setContentView(R.layout.activity_main)
         _stepsChart = findViewById<PieChart>(R.id.steps)
+        _averageText = findViewById<TextView>(R.id.average)
+        _totalStepsText = findViewById<TextView>(R.id.total)
+
         _stepsChart?.addPieSlice(PieModel("Steps",AppPreferences.totalSteps, Color.parseColor("#6200EE")))
         _stepsChart?.addPieSlice(PieModel("Today Steps", 0.0f, Color.parseColor("#000000")))
         _stepsChart?.startAnimation();
@@ -62,6 +71,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getLastSteps(){
         if(AppPreferences.stepsPerDay != ""){
             val stepsPerDay:  TreeMap<Int, Float> = getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
@@ -69,6 +79,11 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
             if(!stepsPerDay.containsKey(dayOfYear))
                 AppPreferences.lastDaySteps = stepsPerDay.values.elementAt(0).absoluteValue
+            _averageText!!.text = "%.2f".format( (AppPreferences.totalSteps/stepsPerDay.size) * STEPS_KM)
+            _totalStepsText!!.text = "%.2f".format( (AppPreferences.totalSteps) * STEPS_KM)
+        } else {
+            _averageText!!.text = "-"
+            _totalStepsText!!.text = "-"
         }
     }
 

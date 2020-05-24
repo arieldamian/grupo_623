@@ -16,4 +16,7 @@
     <string name="re_enter_password">Repetir contraseña</string>
     <string name="create_account">Crear cuenta</string>
     <string name="already_a_member_login">¿Ya tenes una cuenta? Ingresá</string>
+    <string name="steps">steps</string>
+    <string name="average">Average (KM per day)</string>
+    <string name="total">Total steps (KM)</string>
 </resources>
