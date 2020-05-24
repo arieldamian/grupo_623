@@ -67,4 +67,23 @@
         eaze:egLegendTextSize="24dp"
         eaze:egValueTextSize="36dp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/averageandtotaltext"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:text="@string/lastsevendays"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <org.eazegraph.lib.charts.BarChart
+        android:id="@+id/bargraph"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/averageandtotaltext"
+        android:layout_marginTop="50dp"
+        eaze:egLegendHeight="35dp"
+        eaze:egShowValues="true"/>
+
 </RelativeLayout>

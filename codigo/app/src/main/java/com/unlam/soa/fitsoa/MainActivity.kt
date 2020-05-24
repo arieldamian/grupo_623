@@ -22,7 +22,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.unlam.soa.sharedPreferences.AppPreferences
+import org.eazegraph.lib.charts.BarChart
 import org.eazegraph.lib.charts.PieChart
+import org.eazegraph.lib.models.BarModel
 import org.eazegraph.lib.models.PieModel
 import java.lang.reflect.Type
 import java.util.*
@@ -34,6 +36,8 @@ val STEPS_KM = 0.00076
 class MainActivity : BaseActivity(), SensorEventListener {
 
     private var _stepsChart: PieChart? = null
+    private var _barChart: BarChart? = null
+
     private var running = false
     private var _averageText : TextView? = null
     private var _totalStepsText : TextView? = null
@@ -46,12 +50,14 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
         setContentView(R.layout.activity_main)
         _stepsChart = findViewById<PieChart>(R.id.steps)
+        _barChart = findViewById<BarChart>(R.id.bargraph)
         _averageText = findViewById<TextView>(R.id.average)
         _totalStepsText = findViewById<TextView>(R.id.total)
 
         _stepsChart?.addPieSlice(PieModel("Steps",AppPreferences.totalSteps, Color.parseColor("#6200EE")))
         _stepsChart?.addPieSlice(PieModel("Today Steps", 0.0f, Color.parseColor("#000000")))
-        _stepsChart?.startAnimation();
+        _stepsChart?.startAnimation()
+        _barChart?.startAnimation()
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -68,6 +74,27 @@ class MainActivity : BaseActivity(), SensorEventListener {
         getLastSteps()
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    }
+
+    private fun generateBarChart(){
+        var days = 7
+        var bm: BarModel
+        if (_barChart!!.data.size > 0) _barChart!!.clearChart();
+        if(AppPreferences.stepsPerDay != ""){
+            val stepsPerDay:  TreeMap<Int, Float> = getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
+            for ((k) in stepsPerDay) {
+                bm = BarModel("Day $days",stepsPerDay[k]!!, Color.parseColor("#99CC00"))
+                days--
+                _barChart!!.addBar(bm);
+            }
+            for (i in days downTo 0 step 1) {
+                bm = BarModel("Day $days",0.0f, Color.parseColor("#99CC00"))
+                days--
+                _barChart!!.addBar(bm);
+            }
+        }
+
 
     }
 
@@ -154,6 +181,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
             val dayOfYear: Int = getDateOfYear()
             checkSteps(event.values[0])
             AppPreferences.totalSteps = event.values[0]
+            generateBarChart()
             _stepsChart?.clearChart();
             _stepsChart?.addPieSlice(
                 PieModel(
