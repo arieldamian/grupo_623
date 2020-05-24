@@ -174,6 +174,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
+    @SuppressLint("SetTextI18n")
     override fun onSensorChanged(event: SensorEvent) {
         if (running) {
             Log.d("Steps", event.values[0].toString())
@@ -197,6 +198,8 @@ class MainActivity : BaseActivity(), SensorEventListener {
                     Color.parseColor("#000000")
                 )
             )
+            _averageText!!.text = "%.2f".format( (AppPreferences.totalSteps/stepsPerDay.size) * STEPS_KM)
+            _totalStepsText!!.text = "%.2f".format( (AppPreferences.totalSteps) * STEPS_KM)
         }
     }
 }

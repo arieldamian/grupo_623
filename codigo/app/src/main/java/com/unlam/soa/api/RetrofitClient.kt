@@ -3,6 +3,7 @@ package com.unlam.soa.api
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.models.UserBody
+import com.unlam.soa.sharedPreferences.AppPreferences
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -14,6 +15,8 @@ import retrofit2.http.POST
 
 object ApiConstants {
     const val CONTENT_TYPE_HEADER = "Content-Type:application/json"
+    var CONTENT_TOKEN = "token:" + AppPreferences.token
+
 }
 
 data class ResponseLogin(
@@ -37,6 +40,10 @@ interface ApiInterface {
     @Headers(CONTENT_TYPE_HEADER)
     @POST("register")
     fun registerUser(@Body info: UserBody): Call<ResponseSignup>
+
+    @Headers(CONTENT_TYPE_HEADER)
+    @POST("event")
+    fun registerEvent(@Body info: UserBody): Call<ResponseSignup>
 }
 
 class RetrofitInstance {
