@@ -38,7 +38,7 @@ open class BaseActivity : AppCompatActivity() {
                 ).show()
                 sendEvent("Internet", "ACTIVO", "Device not connected to Internet")
 
-            }else sendEvent("Internet", "ACTIVO", "Device connected to Internet")
+            } else sendEvent("Internet", "ACTIVO", "Device connected to Internet")
         }
     }
 
@@ -46,9 +46,9 @@ open class BaseActivity : AppCompatActivity() {
         return DateTime.now().dayOfYear
     }
 
-    fun sendEvent(type: String, state:String,description: String) {
+    fun sendEvent(type: String, state: String, description: String) {
         val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
-        val eventInfo = EventBody(type, state,description)
+        val eventInfo = EventBody(type, state, description)
 
         retIn.registerEvent(eventInfo).enqueue(object : Callback<ResponseEvent> {
             override fun onFailure(call: Call<ResponseEvent>?, t: Throwable) {
@@ -61,14 +61,14 @@ open class BaseActivity : AppCompatActivity() {
             ) {
                 if (response!!.body() == null || response.code() >= 400) {
                     val errorBody = JSONObject(response.errorBody()!!.string())
-                    Log.d("Event error", errorBody.get("msg") as String )
+                    Log.d("Event error", errorBody.get("msg") as String)
                     return
                 }
 
                 val responseBody = response.body() as ResponseEvent
 
                 if (responseBody.state == "success")
-                    Log.d("Event success",responseBody.state)
+                    Log.d("Event success", responseBody.state)
 
             }
         })
