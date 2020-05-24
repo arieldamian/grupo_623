@@ -132,30 +132,6 @@ class MainActivity : BaseActivity(), SensorEventListener {
         sensorManager?.unregisterListener(this)
     }
 
-    private fun checkSteps(steps: Float) {
-        val dayOfYear: Int = getDateOfYear()
-        val stepsPerDay: TreeMap<Int, Float> =
-            getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-        val realSteps: Float =
-            if (steps < AppPreferences.totalSteps) AppPreferences.totalSteps else steps
-        if (AppPreferences.stepsPerDay != "") {
-            stepsPerDay[dayOfYear] = realSteps - AppPreferences.lastDaySteps
-        } else {
-            stepsPerDay[dayOfYear] = realSteps
-        }
-        updateStepsPerDay(stepsPerDay)
-    }
-
-    private fun updateStepsPerDay(stepsPerDay: TreeMap<Int, Float>) {
-        // convert map to JSON String
-
-        val builder = GsonBuilder()
-        val gson = builder.enableComplexMapKeySerialization().setPrettyPrinting().create()
-        val type: Type = object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
-        val stringMap: String = gson.toJson(stepsPerDay, type)
-        AppPreferences.stepsPerDay = stringMap
-    }
-
     private fun checkLogin() {
         if (!AppPreferences.isLogged) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -180,6 +156,30 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
             _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
         }
+    }
+
+    private fun checkSteps(steps: Float) {
+        val dayOfYear: Int = getDateOfYear()
+        val stepsPerDay: TreeMap<Int, Float> =
+            getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
+        val realSteps: Float =
+            if (steps < AppPreferences.totalSteps) AppPreferences.totalSteps else steps
+        if (AppPreferences.stepsPerDay != "") {
+            stepsPerDay[dayOfYear] = realSteps - AppPreferences.lastDaySteps
+        } else {
+            stepsPerDay[dayOfYear] = realSteps
+        }
+        storeStepsPerDay(stepsPerDay)
+    }
+
+    private fun storeStepsPerDay(stepsPerDay: TreeMap<Int, Float>) {
+        // convert map to JSON String
+
+        val builder = GsonBuilder()
+        val gson = builder.enableComplexMapKeySerialization().setPrettyPrinting().create()
+        val type: Type = object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
+        val stringMap: String = gson.toJson(stepsPerDay, type)
+        AppPreferences.stepsPerDay = stringMap
     }
 
     private fun generateBarChart() {
