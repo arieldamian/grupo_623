@@ -1,14 +1,24 @@
 package com.unlam.soa.fitsoa
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.soywiz.klock.DateTime
+import com.unlam.soa.api.ApiInterface
+import com.unlam.soa.api.ResponseEvent
+import com.unlam.soa.api.ResponseLogin
+import com.unlam.soa.api.RetrofitInstance
+import com.unlam.soa.models.EventBody
+import com.unlam.soa.models.SignInBody
 import com.unlam.soa.utils.Utils
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -31,6 +41,34 @@ open class BaseActivity : AppCompatActivity() {
     fun getDateOfYear(): Int {
         val time = DateTime.now()
         return time.dayOfYear
+    }
+
+    fun sendEvent(type: String, state:String,description: String) {
+        val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
+        val eventInfo = EventBody(type, state,description)
+
+        retIn.registerEvent(eventInfo).enqueue(object : Callback<ResponseEvent> {
+            override fun onFailure(call: Call<ResponseEvent>?, t: Throwable) {
+                Log.d("Event error", t.message!!)
+            }
+
+            override fun onResponse(
+                call: Call<ResponseEvent>?,
+                response: Response<ResponseEvent>?
+            ) {
+                if (response!!.body() == null || response.code() >= 400) {
+                    val errorBody = JSONObject(response.errorBody()!!.string())
+                    Log.d("Event error", errorBody.get("msg") as String )
+                    return
+                }
+
+                val responseBody = response.body() as ResponseEvent
+
+                if (responseBody.state == "success")
+                    Log.d("Event success",responseBody.state)
+
+            }
+        })
     }
 
     override fun onStart() {

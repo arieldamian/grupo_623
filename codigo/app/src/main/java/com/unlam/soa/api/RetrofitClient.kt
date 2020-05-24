@@ -2,6 +2,7 @@ package com.unlam.soa.api
 
 import com.unlam.soa.api.ApiConstants.BASE_URL
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
+import com.unlam.soa.models.EventBody
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.models.UserBody
 import com.unlam.soa.sharedPreferences.AppPreferences
@@ -15,12 +16,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import java.util.*
 
 object ApiConstants {
     const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
     const val CONTENT_TYPE_HEADER = "Content-Type:application/json"
-    val CONTENT_TOKEN = "token:" + AppPreferences.token
-
 }
 
 data class ResponseLogin(
@@ -36,6 +36,12 @@ data class ResponseSignup(
     val msg: String
 )
 
+data class ResponseEvent(
+    val state: String,
+    val env: String,
+    val event: Any
+)
+
 interface ApiInterface {
     @Headers(CONTENT_TYPE_HEADER)
     @POST("login")
@@ -47,7 +53,7 @@ interface ApiInterface {
 
     @Headers(CONTENT_TYPE_HEADER)
     @POST("event")
-    fun registerEvent(@Body info: UserBody): Call<ResponseSignup>
+    fun registerEvent(@Body info: EventBody): Call<ResponseEvent>
 }
 
 class RetrofitInstance {
