@@ -1,10 +1,13 @@
 package com.unlam.soa.api
 
+import com.unlam.soa.api.ApiConstants.BASE_URL
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.models.UserBody
 import com.unlam.soa.sharedPreferences.AppPreferences
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -14,8 +17,9 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 object ApiConstants {
+    const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
     const val CONTENT_TYPE_HEADER = "Content-Type:application/json"
-    var CONTENT_TOKEN = "token:" + AppPreferences.token
+    val CONTENT_TOKEN = "token:" + AppPreferences.token
 
 }
 
@@ -48,15 +52,15 @@ interface ApiInterface {
 
 class RetrofitInstance {
     companion object {
-        private const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
-
         val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
             this.level = HttpLoggingInterceptor.Level.BODY
         }
 
         val client: OkHttpClient = OkHttpClient.Builder().apply {
             this.addInterceptor(interceptor)
+            this.addInterceptor(ServiceInterceptor())
         }.build()
+
 
         fun getRetrofitInstance(): Retrofit {
             return Retrofit.Builder()
@@ -66,4 +70,25 @@ class RetrofitInstance {
                 .build()
         }
     }
+}
+
+class ServiceInterceptor : Interceptor{
+
+    var token : String = "";
+    var path: String = ""
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+        var request = chain.request()
+        token = AppPreferences.token
+        path = request.url().toString()
+        if(token.isNotEmpty() && path == BASE_URL+"event")
+        {
+            request = request.newBuilder()
+                .addHeader("token",token)
+                .build()
+        }
+
+        return chain.proceed(request)
+    }
+
 }
