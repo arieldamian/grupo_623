@@ -43,8 +43,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun getDateOfYear(): Int {
-        val time = DateTime.now()
-        return time.dayOfYear
+        return DateTime.now().dayOfYear
     }
 
     fun sendEvent(type: String, state:String,description: String) {
