@@ -15,8 +15,6 @@ object AppPreferences {
     private val TOTAL_STEPS = Pair("total_steps", 0.0f)
     private val LAST_DAY_STEPS = Pair("last_day_steps", 0.0f)
 
-
-
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
     }
@@ -44,7 +42,7 @@ object AppPreferences {
     var totalSteps: Float
         get() = (preferences.getFloat(TOTAL_STEPS.first, TOTAL_STEPS.second) ?: "") as Float
         set(value) = preferences.edit {
-                it.putFloat(TOTAL_STEPS.first, value)
+            it.putFloat(TOTAL_STEPS.first, value)
         }
 
     var lastDaySteps: Float
