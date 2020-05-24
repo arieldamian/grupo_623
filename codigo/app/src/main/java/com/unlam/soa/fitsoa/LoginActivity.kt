@@ -73,7 +73,7 @@ class LoginActivity : BaseActivity() {
 
         retIn.signin(signInInfo).enqueue(object : Callback<ResponseLogin> {
             override fun onFailure(call: Call<ResponseLogin>?, t: Throwable) {
-                onLoginFailed()
+                onLoginFailed(t.message!!)
             }
 
             override fun onResponse(
