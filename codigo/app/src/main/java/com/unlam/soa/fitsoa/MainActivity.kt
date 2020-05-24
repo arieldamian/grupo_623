@@ -72,6 +72,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         _barChart?.startAnimation()
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -128,8 +129,14 @@ class MainActivity : BaseActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
+        sendEvent("Sensor", "ACTIVO", "Step sensor running in background")
+    }
+
+    override fun onStop() {
+        super.onStop()
         running = false
         sensorManager?.unregisterListener(this)
+        sendEvent("Sensor", "INACTIVO", "Step sensor was unregistered")
     }
 
     private fun checkLogin() {
@@ -169,6 +176,9 @@ class MainActivity : BaseActivity(), SensorEventListener {
         } else {
             stepsPerDay[dayOfYear] = realSteps
         }
+        if(stepsPerDay[dayOfYear]!! > 500.0f)
+            sendEvent("Sensor", "ACTIVO", "Step sensor reach 100 steps in a day")
+
         storeStepsPerDay(stepsPerDay)
     }
 

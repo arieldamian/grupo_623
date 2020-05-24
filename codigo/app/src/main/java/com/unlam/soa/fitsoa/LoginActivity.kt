@@ -109,6 +109,7 @@ class LoginActivity : BaseActivity() {
         _loginButton!!.isEnabled = true
         AppPreferences.isLogged = true
         AppPreferences.token = token
+        sendEvent("Login", "ACTIVO", "Login successful")
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
