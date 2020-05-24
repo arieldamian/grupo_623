@@ -1,7 +1,6 @@
 package com.unlam.soa.fitsoa
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -45,9 +44,17 @@ class MainActivity : BaseActivity(), SensorEventListener {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkLogin()
-
         setContentView(R.layout.activity_main)
+
+        checkLogin()
+        setUpView()
+        requestPermission()
+        getLastSteps()
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    private fun setUpView() {
         _stepsChart = findViewById<PieChart>(R.id.steps)
         _barChart = findViewById<BarChart>(R.id.bargraph)
         _averageText = findViewById<TextView>(R.id.average)
@@ -63,7 +70,9 @@ class MainActivity : BaseActivity(), SensorEventListener {
         _stepsChart?.addPieSlice(PieModel("Today Steps", 0.0f, Color.parseColor("#000000")))
         _stepsChart?.startAnimation()
         _barChart?.startAnimation()
+    }
 
+    private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION
@@ -75,40 +84,16 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 123
             );
         }
-
-        getLastSteps()
-
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    }
-
-    private fun generateBarChart() {
-        var days = 7
-        var bm: BarModel
-        if (_barChart!!.data.size > 0) _barChart!!.clearChart();
-        if (AppPreferences.stepsPerDay != "") {
-            val stepsPerDay: TreeMap<Int, Float> =
-                getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-            for ((k) in stepsPerDay) {
-                bm = BarModel("Day $days", stepsPerDay[k]!!, Color.parseColor("#99CC00"))
-                days--
-                _barChart!!.addBar(bm);
-            }
-            for (i in days downTo 0 step 1) {
-                bm = BarModel("Day $days", 0.0f, Color.parseColor("#99CC00"))
-                days--
-                _barChart!!.addBar(bm);
-            }
-        }
     }
 
     private fun getLastSteps() {
         if (AppPreferences.stepsPerDay != "") {
             val stepsPerDay: TreeMap<Int, Float> =
                 getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-            val dayOfYear: Int = getDateOfYear()
 
-            if (!stepsPerDay.containsKey(dayOfYear))
+            if (!stepsPerDay.containsKey(getDateOfYear()))
                 AppPreferences.lastDaySteps = stepsPerDay.values.elementAt(0).absoluteValue
+
             _averageText!!.text =
                 "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
             _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
@@ -116,6 +101,14 @@ class MainActivity : BaseActivity(), SensorEventListener {
             _averageText!!.text = "-"
             _totalStepsText!!.text = "-"
         }
+    }
+
+    private fun getStepsPerDay(): TreeMap<Int, Float> {
+        if (AppPreferences.stepsPerDay == "") return TreeMap<Int, Float>()
+        return Gson().fromJson(
+            AppPreferences.stepsPerDay,
+            object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
+        )
     }
 
     override fun onResume() {
@@ -137,14 +130,6 @@ class MainActivity : BaseActivity(), SensorEventListener {
         super.onPause()
         running = false
         sensorManager?.unregisterListener(this)
-    }
-
-    private fun getStepsPerDay(): TreeMap<Int, Float> {
-        if (AppPreferences.stepsPerDay == "") return TreeMap<Int, Float>()
-        return Gson().fromJson(
-            AppPreferences.stepsPerDay,
-            object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
-        )
     }
 
     private fun checkSteps(steps: Float) {
@@ -185,28 +170,55 @@ class MainActivity : BaseActivity(), SensorEventListener {
             Log.d("Steps", event.values[0].toString())
             val stepsPerDay: TreeMap<Int, Float> =
                 getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-            val dayOfYear: Int = getDateOfYear()
             checkSteps(event.values[0])
             AppPreferences.totalSteps = event.values[0]
+
             generateBarChart()
-            _stepsChart?.clearChart();
-            _stepsChart?.addPieSlice(
-                PieModel(
-                    "Total Steps",
-                    AppPreferences.totalSteps,
-                    Color.parseColor("#6200EE")
-                )
-            )
-            _stepsChart?.addPieSlice(
-                PieModel(
-                    "Today Steps",
-                    stepsPerDay[dayOfYear] ?: 0.0f,
-                    Color.parseColor("#000000")
-                )
-            )
+            generatePieChart(stepsPerDay);
+
             _averageText!!.text =
                 "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
             _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
         }
+    }
+
+    private fun generateBarChart() {
+        var days = 7
+        var bm: BarModel
+        if (_barChart!!.data.size > 0) _barChart!!.clearChart();
+        if (AppPreferences.stepsPerDay != "") {
+            val stepsPerDay: TreeMap<Int, Float> =
+                getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
+            for ((k) in stepsPerDay) {
+                bm = BarModel("Day $days", stepsPerDay[k]!!, Color.parseColor("#99CC00"))
+                days--
+                _barChart!!.addBar(bm);
+            }
+            for (i in days downTo 0 step 1) {
+                bm = BarModel("Day $days", 0.0f, Color.parseColor("#99CC00"))
+                days--
+                _barChart!!.addBar(bm);
+            }
+        }
+    }
+
+    private fun generatePieChart(stepsPerDay: TreeMap<Int, Float>) {
+        val dayOfYear: Int = getDateOfYear()
+
+        _stepsChart?.clearChart();
+        _stepsChart?.addPieSlice(
+            PieModel(
+                "Total Steps",
+                AppPreferences.totalSteps,
+                Color.parseColor("#6200EE")
+            )
+        )
+        _stepsChart?.addPieSlice(
+            PieModel(
+                "Today Steps",
+                stepsPerDay[dayOfYear] ?: 0.0f,
+                Color.parseColor("#000000")
+            )
+        )
     }
 }
