@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.soywiz.klock.DateTime
 import com.unlam.soa.api.ApiInterface
 import com.unlam.soa.api.ResponseEvent
@@ -24,6 +25,8 @@ open class BaseActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
