@@ -36,7 +36,6 @@ open class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        // incializar brodcast
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         registerReceiver(broadcastReceiver, intentFilter)
     }

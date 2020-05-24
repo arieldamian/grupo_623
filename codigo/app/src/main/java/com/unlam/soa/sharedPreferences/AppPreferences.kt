@@ -19,14 +19,12 @@ object AppPreferences {
         preferences = context.getSharedPreferences(NAME, MODE)
     }
 
-    //an inline function to put variable and save it
     private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
         val editor = edit()
         operation(editor)
         editor.apply()
     }
 
-    //SharedPreferences variables getters/setters
     var isLogged: Boolean
         get() = preferences.getBoolean(IS_LOGGED.first, IS_LOGGED.second)
         set(value) = preferences.edit {
