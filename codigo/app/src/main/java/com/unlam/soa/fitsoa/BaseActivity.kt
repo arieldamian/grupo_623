@@ -36,8 +36,6 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
 
         if (lightSensor == null) {
             Toast.makeText(this, "No Light Sensor !", Toast.LENGTH_SHORT).show()
-        } else {
-            sensorManager?.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
 
@@ -98,6 +96,13 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
         super.onStop()
 
         unregisterReceiver(broadcastReceiver)
+        sensorManager?.unregisterListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        sensorManager?.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
