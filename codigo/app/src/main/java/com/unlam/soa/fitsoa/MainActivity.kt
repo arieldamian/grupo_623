@@ -20,7 +20,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.unlam.soa.sharedPreferences.AppPreferences
-import com.unlam.soa.utils.MyFirebaseInstanceIdService
 import com.unlam.soa.utils.MyFirebaseInstanceIdService.Companion.sendNotification
 import org.eazegraph.lib.charts.BarChart
 import org.eazegraph.lib.charts.PieChart
@@ -188,8 +187,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun storeStepsPerDay(stepsPerDay: TreeMap<Int, Float>) {
-        // convert map to JSON String
-
         val builder = GsonBuilder()
         val gson = builder.enableComplexMapKeySerialization().setPrettyPrinting().create()
         val type: Type = object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
