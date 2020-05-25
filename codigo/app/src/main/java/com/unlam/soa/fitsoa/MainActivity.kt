@@ -10,9 +10,12 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,20 +36,22 @@ val STEPS_KM = 0.00076
 val STEPS_GOAL = 500.0f
 
 class MainActivity : BaseActivity() {
+    private var running = false
+    private var stepsSensor: Sensor? = null
+
     private var _stepsChart: PieChart? = null
     private var _barChart: BarChart? = null
-
-    private var running = false
     private var _averageText: TextView? = null
     private var _totalStepsText: TextView? = null
     private var _themeText: TextView? = null
-
-    private var stepsSensor: Sensor? = null
+    private var _logoutButton: ImageView? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar?.setCustomView(R.layout.custom_action_bar)
 
         checkLogin()
         setUpView()
@@ -59,12 +64,24 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun checkLogin() {
+        if (!AppPreferences.isLogged) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+    }
+
     private fun setUpView() {
         _stepsChart = findViewById<PieChart>(R.id.steps)
         _barChart = findViewById<BarChart>(R.id.bargraph)
         _averageText = findViewById<TextView>(R.id.average)
         _totalStepsText = findViewById<TextView>(R.id.total)
         _themeText = findViewById<TextView>(R.id.theme)
+        _logoutButton = findViewById<ImageView>(R.id.logout_button)
+
+        _logoutButton?.setOnClickListener {
+            onLogoutButtonPressed()
+        }
 
         _stepsChart?.addPieSlice(
             PieModel(
@@ -82,6 +99,25 @@ class MainActivity : BaseActivity() {
         )
         _stepsChart?.startAnimation()
         _barChart?.startAnimation()
+    }
+
+    private fun onLogoutButtonPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Logout")
+        builder.setMessage("Are you sure?")
+
+        builder.setPositiveButton("Yes") { dialogInterface, which ->
+            sendEvent("Login", "INACTIVO", "Logout success")
+            AppPreferences.isLogged = false
+            AppPreferences.token = ""
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        builder.setNeutralButton("Nope") { dialogInterface, which -> }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -124,49 +160,6 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkLogin()
-
-        running = true
-        if (stepsSensor != null)
-            sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
-
-        getLastSteps()
-        setThemeText()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        running = false
-        sensorManager?.unregisterListener(this)
-        sendEvent("Sensor", "INACTIVO", "Step sensor was unregistered")
-    }
-
-    private fun checkLogin() {
-        if (!AppPreferences.isLogged) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
-    }
-
-    override fun onStepSensorChangedTriggered(event: SensorEvent) {
-        if (running) {
-            Log.d("Steps", event.values[0].toString())
-            val stepsPerDay: TreeMap<Int, Float> =
-                getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
-            checkSteps(event.values[0])
-            AppPreferences.totalSteps = event.values[0]
-
-            generateBarChart()
-            generatePieChart(stepsPerDay);
-
-            _averageText!!.text =
-                "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
-            _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
-        }
-    }
-
     private fun checkSteps(steps: Float) {
         val dayOfYear: Int = getDateOfYear()
         val stepsPerDay: TreeMap<Int, Float> =
@@ -180,7 +173,10 @@ class MainActivity : BaseActivity() {
         }
 
         if (stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
-            sendNotification("Congratulations!", "You have reach ${stepsPerDay[dayOfYear]?.toInt()} steps")
+            sendNotification(
+                "Congratulations!",
+                "You have reach ${stepsPerDay[dayOfYear]?.toInt()} steps"
+            )
             sendEvent(
                 "Sensor",
                 "ACTIVO",
@@ -246,5 +242,41 @@ class MainActivity : BaseActivity() {
         } else {
             _themeText!!.text = "Light theme"
         }
+    }
+
+    override fun onStepSensorChangedTriggered(event: SensorEvent) {
+        if (running) {
+            Log.d("Steps", event.values[0].toString())
+            val stepsPerDay: TreeMap<Int, Float> =
+                getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
+            checkSteps(event.values[0])
+            AppPreferences.totalSteps = event.values[0]
+
+            generateBarChart()
+            generatePieChart(stepsPerDay);
+
+            _averageText!!.text =
+                "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
+            _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLogin()
+
+        running = true
+        if (stepsSensor != null)
+            sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
+
+        getLastSteps()
+        setThemeText()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        running = false
+        sensorManager?.unregisterListener(this)
+        sendEvent("Sensor", "INACTIVO", "Step sensor was unregistered")
     }
 }
