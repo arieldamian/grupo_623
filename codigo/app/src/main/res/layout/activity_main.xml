@@ -1,11 +1,11 @@
-<androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+<androidx.core.widget.NestedScrollView xmlns:eaze="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
-        xmlns:eaze="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
@@ -94,13 +94,20 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_below="@id/bargraph"
-            android:layout_margin="10dp"
-            >
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            eaze:cardBackgroundColor="#1E544E4E">
+
             <TextView
                 android:id="@+id/theme"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#8BC34A"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
     </RelativeLayout>

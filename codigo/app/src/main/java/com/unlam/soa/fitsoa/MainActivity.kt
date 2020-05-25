@@ -137,8 +137,8 @@ class MainActivity : BaseActivity() {
         setThemeText()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         running = false
         sensorManager?.unregisterListener(this)
         sendEvent("Sensor", "INACTIVO", "Step sensor was unregistered")

@@ -92,11 +92,13 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
         registerReceiver(broadcastReceiver, intentFilter)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
 
         unregisterReceiver(broadcastReceiver)
         sensorManager?.unregisterListener(this)
+        sendEvent("Sensor","INACTIVO", "Light sensor was unregistered")
+
     }
 
     override fun onResume() {
@@ -114,10 +116,10 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
             if (event.sensor.type == Sensor.TYPE_LIGHT) {
                 val value: Float = event.values[0]
                 val nightMode: Int = AppCompatDelegate.getDefaultNightMode()
-
-                if (value > 7 && nightMode != AppCompatDelegate.MODE_NIGHT_YES) {
+                sendEvent("Sensor","ACTIVO", "Light sensor changed - Theme updated")
+                if (value < 3 && nightMode != AppCompatDelegate.MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else if (value < 4 && nightMode != AppCompatDelegate.MODE_NIGHT_NO) {
+                } else if (value > 10 && nightMode != AppCompatDelegate.MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
             } else {
