@@ -180,7 +180,7 @@ class MainActivity : BaseActivity() {
         }
 
         if (stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
-            sendNotification("Congratulations!", "You have reach ${stepsPerDay[dayOfYear]} steps")
+            sendNotification("Congratulations!", "You have reach ${stepsPerDay[dayOfYear]?.toInt()} steps")
             sendEvent(
                 "Sensor",
                 "ACTIVO",
