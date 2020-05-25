@@ -1,13 +1,11 @@
 package com.unlam.soa.fitsoa
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
@@ -31,15 +29,13 @@ import kotlin.math.absoluteValue
 
 val STEPS_KM = 0.00076
 
-class MainActivity : BaseActivity(), SensorEventListener {
-
+class MainActivity : BaseActivity() {
     private var _stepsChart: PieChart? = null
     private var _barChart: BarChart? = null
 
     private var running = false
     private var _averageText: TextView? = null
     private var _totalStepsText: TextView? = null
-    private var sensorManager: SensorManager? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +46,6 @@ class MainActivity : BaseActivity(), SensorEventListener {
         setUpView()
         requestPermission()
         getLastSteps()
-
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
     private fun setUpView() {
@@ -78,7 +72,6 @@ class MainActivity : BaseActivity(), SensorEventListener {
         _barChart?.startAnimation()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -133,11 +126,6 @@ class MainActivity : BaseActivity(), SensorEventListener {
         getLastSteps()
     }
 
-    override fun onPause() {
-        super.onPause()
-        sendEvent("Sensor", "ACTIVO", "Step sensor running in background")
-    }
-
     override fun onStop() {
         super.onStop()
         running = false
@@ -152,9 +140,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-    override fun onSensorChanged(event: SensorEvent) {
+    override fun onStepSensorChangedTriggered(event: SensorEvent) {
         if (running) {
             Log.d("Steps", event.values[0].toString())
             val stepsPerDay: TreeMap<Int, Float> =
