@@ -1,6 +1,5 @@
 package com.unlam.soa.api
 
-import com.google.firebase.messaging.RemoteMessage
 import com.unlam.soa.api.ApiConstants.AUTHORIZATION_FIREBASE_HEADER
 import com.unlam.soa.api.ApiConstants.BASE_URL
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
@@ -24,8 +23,7 @@ import retrofit2.http.POST
 object ApiConstants {
     const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
     const val CONTENT_TYPE_HEADER = "Content-Type:application/json"
-    const val AUTHORIZATION_FIREBASE_HEADER = "Authorization:key="+ BuildConfig.SERVER_KEY
-
+    const val AUTHORIZATION_FIREBASE_HEADER = "Authorization:key=${BuildConfig.SERVER_KEY}"
 }
 
 data class ResponseLogin(
@@ -74,7 +72,7 @@ interface ApiInterface {
     @POST("event")
     fun registerEvent(@Body info: EventBody): Call<ResponseEvent>
 
-    @Headers(CONTENT_TYPE_HEADER,AUTHORIZATION_FIREBASE_HEADER)
+    @Headers(CONTENT_TYPE_HEADER, AUTHORIZATION_FIREBASE_HEADER)
     @POST("send")
     fun sendNotification(@Body info: NotificationBody): Call<ResponseNotification>
 }
@@ -90,7 +88,6 @@ class RetrofitInstance {
             this.addInterceptor(ServiceInterceptor())
         }.build()
 
-
         fun getRetrofitInstance(): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -101,24 +98,20 @@ class RetrofitInstance {
     }
 }
 
-class ServiceInterceptor : Interceptor{
-
-    var token : String = "";
+class ServiceInterceptor : Interceptor {
+    var token: String = "";
     var path: String = ""
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         token = AppPreferences.token
         path = request.url().toString()
-        if(token.isNotEmpty() && path == BASE_URL+"event")
-        {
+        if (token.isNotEmpty() && path == BASE_URL + "event") {
             request = request.newBuilder()
-                .addHeader("token",token)
+                .addHeader("token", token)
                 .build()
         }
 
-
         return chain.proceed(request)
     }
-
 }
