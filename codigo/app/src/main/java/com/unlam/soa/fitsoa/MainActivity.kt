@@ -37,6 +37,8 @@ class MainActivity : BaseActivity() {
     private var _averageText: TextView? = null
     private var _totalStepsText: TextView? = null
 
+    private var stepsSensor: Sensor? = null
+
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,11 @@ class MainActivity : BaseActivity() {
         setUpView()
         requestPermission()
         getLastSteps()
+
+        stepsSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if (stepsSensor == null) {
+            Toast.makeText(this, "No Step Counter Sensor !", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setUpView() {
@@ -116,13 +123,9 @@ class MainActivity : BaseActivity() {
         checkLogin()
 
         running = true
-        val stepsSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
-        if (stepsSensor == null) {
-            Toast.makeText(this, "No Step Counter Sensor !", Toast.LENGTH_SHORT).show()
-        } else {
+        if(stepsSensor != null)
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
-        }
+
         getLastSteps()
     }
 
