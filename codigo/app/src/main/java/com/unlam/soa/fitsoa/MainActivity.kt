@@ -179,9 +179,9 @@ class MainActivity : BaseActivity() {
             stepsPerDay[dayOfYear] = realSteps
         }
 
-        if(stepsPerDay[dayOfYear]!! == STEPS_GOAL){
-            sendNotification("Congratulations!","You have reach " + stepsPerDay[dayOfYear] + " steps")
-            sendEvent("Sensor", "ACTIVO", "Step sensor reach 500 steps in a day")
+        if(stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f){
+            sendNotification("Congratulations!","You have reach ${stepsPerDay[dayOfYear]} steps")
+            sendEvent("Sensor", "ACTIVO", "Step sensor reach ${stepsPerDay[dayOfYear]} steps in a day")
         }
         storeStepsPerDay(stepsPerDay)
     }
