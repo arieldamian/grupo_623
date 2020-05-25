@@ -128,7 +128,7 @@ class SignupActivity : BaseActivity() {
         finish()
     }
 
-    private fun onSignupFailed(msg: String? = "Register failed with default message ") {
+    private fun onSignupFailed(msg: String? = "Register failed with default message") {
         _progressBar!!.visibility = View.INVISIBLE;
         Toast.makeText(baseContext, msg, Toast.LENGTH_LONG).show()
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
