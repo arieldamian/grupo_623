@@ -13,6 +13,7 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
@@ -36,6 +37,7 @@ class MainActivity : BaseActivity() {
     private var running = false
     private var _averageText: TextView? = null
     private var _totalStepsText: TextView? = null
+    private var _themeText: TextView? = null
 
     private var stepsSensor: Sensor? = null
 
@@ -60,6 +62,7 @@ class MainActivity : BaseActivity() {
         _barChart = findViewById<BarChart>(R.id.bargraph)
         _averageText = findViewById<TextView>(R.id.average)
         _totalStepsText = findViewById<TextView>(R.id.total)
+        _themeText = findViewById<TextView>(R.id.theme)
 
         _stepsChart?.addPieSlice(
             PieModel(
@@ -127,6 +130,7 @@ class MainActivity : BaseActivity() {
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
 
         getLastSteps()
+        setThemeText()
     }
 
     override fun onStop() {
@@ -225,5 +229,14 @@ class MainActivity : BaseActivity() {
                 Color.parseColor("#000000")
             )
         )
+    }
+
+    private fun setThemeText() {
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ||
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            _themeText!!.text = "Dark theme"
+        } else {
+            _themeText!!.text = "Light theme"
+        }
     }
 }
