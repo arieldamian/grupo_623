@@ -1,21 +1,40 @@
-<androidx.core.widget.NestedScrollView xmlns:eaze="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:eaze="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         tools:context=".MainActivity">
+
+        <org.eazegraph.lib.charts.PieChart
+            android:id="@+id/steps"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:padding="8dp"
+            eaze:egEmptyDataText="36dp"
+            eaze:egHighlightStrength="1"
+            eaze:egInnerPadding="75"
+            eaze:egLegendTextSize="12dp"
+            eaze:egValueTextSize="28dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/steps"
+            android:layout_alignParentStart="true"
+            >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/averageandtotal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/steps"
-            android:layout_alignParentStart="true"
             android:layout_marginTop="20dp">
 
             <TextView
@@ -40,8 +59,7 @@
         <LinearLayout
             android:id="@+id/averageandtotaltext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/averageandtotal">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="0dp"
@@ -58,57 +76,47 @@
                 android:text="@string/total" />
         </LinearLayout>
 
-        <org.eazegraph.lib.charts.PieChart
-            android:id="@+id/steps"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="32dp"
-            android:padding="8dp"
-            eaze:egEmptyDataText="36dp"
-            eaze:egHighlightStrength="1"
-            eaze:egInnerPadding="75"
-            eaze:egLegendTextSize="24dp"
-            eaze:egValueTextSize="36dp" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/averageandtotaltext"
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:text="@string/lastsevendays"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <org.eazegraph.lib.charts.BarChart
-            android:id="@+id/bargraph"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@+id/averageandtotaltext"
-            android:layout_marginTop="50dp"
-            eaze:egLegendHeight="35dp"
-            eaze:egShowValues="true"/>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_below="@id/bargraph"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            eaze:cardBackgroundColor="#1E544E4E">
+            <org.eazegraph.lib.charts.BarChart
+                android:id="@+id/bargraph"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                eaze:egLegendHeight="35dp"
+                eaze:egShowValues="true"></org.eazegraph.lib.charts.BarChart>
 
-            <TextView
-                android:id="@+id/theme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#8BC34A"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                eaze:cardBackgroundColor="#1E544E4E">
+
+                <TextView
+                    android:id="@+id/theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="#8BC34A"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
     </RelativeLayout>
-</androidx.core.widget.NestedScrollView>
