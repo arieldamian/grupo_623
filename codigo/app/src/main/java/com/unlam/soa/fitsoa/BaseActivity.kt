@@ -4,6 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -20,12 +24,21 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : AppCompatActivity(), SensorEventListener {
+    var sensorManager: SensorManager? = null
+    private var lightSensor: Sensor? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        lightSensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        if (lightSensor == null) {
+            Toast.makeText(this, "No Light Sensor !", Toast.LENGTH_SHORT).show()
+        } else {
+            sensorManager?.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
     }
 
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -85,5 +98,26 @@ open class BaseActivity : AppCompatActivity() {
         super.onStop()
 
         unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+
+    open fun onStepSensorChangedTriggered(event: SensorEvent) {}
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event != null) {
+            if (event.sensor.type == Sensor.TYPE_LIGHT) {
+                val value: Float = event.values[0]
+                val nightMode: Int = AppCompatDelegate.getDefaultNightMode()
+
+                if (value > 7 && nightMode != AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else if (value < 4 && nightMode != AppCompatDelegate.MODE_NIGHT_NO) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            } else {
+                onStepSensorChangedTriggered(event)
+            }
+        }
     }
 }
