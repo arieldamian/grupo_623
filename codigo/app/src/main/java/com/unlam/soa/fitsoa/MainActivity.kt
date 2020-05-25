@@ -129,7 +129,7 @@ class MainActivity : BaseActivity() {
         checkLogin()
 
         running = true
-        if(stepsSensor != null)
+        if (stepsSensor != null)
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
 
         getLastSteps()
@@ -179,9 +179,13 @@ class MainActivity : BaseActivity() {
             stepsPerDay[dayOfYear] = realSteps
         }
 
-        if(stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f){
-            sendNotification("Congratulations!","You have reach ${stepsPerDay[dayOfYear]} steps")
-            sendEvent("Sensor", "ACTIVO", "Step sensor reach ${stepsPerDay[dayOfYear]} steps in a day")
+        if (stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
+            sendNotification("Congratulations!", "You have reach ${stepsPerDay[dayOfYear]} steps")
+            sendEvent(
+                "Sensor",
+                "ACTIVO",
+                "Step sensor reach ${stepsPerDay[dayOfYear]} steps in a day"
+            )
         }
         storeStepsPerDay(stepsPerDay)
     }
@@ -236,7 +240,8 @@ class MainActivity : BaseActivity() {
 
     private fun setThemeText() {
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ||
-            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+        ) {
             _themeText!!.text = "Dark theme"
         } else {
             _themeText!!.text = "Light theme"
