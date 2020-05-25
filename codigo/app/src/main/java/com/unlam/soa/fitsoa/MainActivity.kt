@@ -1,13 +1,11 @@
 package com.unlam.soa.fitsoa
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +13,7 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
@@ -34,15 +33,16 @@ import kotlin.math.absoluteValue
 val STEPS_KM = 0.00076
 val STEPS_GOAL = 500.0f
 
-class MainActivity : BaseActivity(), SensorEventListener {
-
+class MainActivity : BaseActivity() {
     private var _stepsChart: PieChart? = null
     private var _barChart: BarChart? = null
 
     private var running = false
     private var _averageText: TextView? = null
     private var _totalStepsText: TextView? = null
-    private var sensorManager: SensorManager? = null
+    private var _themeText: TextView? = null
+
+    private var stepsSensor: Sensor? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,10 @@ class MainActivity : BaseActivity(), SensorEventListener {
         requestPermission()
         getLastSteps()
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        stepsSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if (stepsSensor == null) {
+            Toast.makeText(this, "No Step Counter Sensor !", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setUpView() {
@@ -62,6 +65,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         _barChart = findViewById<BarChart>(R.id.bargraph)
         _averageText = findViewById<TextView>(R.id.average)
         _totalStepsText = findViewById<TextView>(R.id.total)
+        _themeText = findViewById<TextView>(R.id.theme)
 
         _stepsChart?.addPieSlice(
             PieModel(
@@ -70,7 +74,13 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 Color.parseColor("#6200EE")
             )
         )
-        _stepsChart?.addPieSlice(PieModel("Today Steps", 0.0f, Color.parseColor("#000000")))
+        _stepsChart?.addPieSlice(
+            PieModel(
+                "Today Steps",
+                0.0f,
+                Color.parseColor("#000000")
+            )
+        )
         _stepsChart?.startAnimation()
         _barChart?.startAnimation()
     }
@@ -120,19 +130,11 @@ class MainActivity : BaseActivity(), SensorEventListener {
         checkLogin()
 
         running = true
-        val stepsSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
-        if (stepsSensor == null) {
-            Toast.makeText(this, "No Step Counter Sensor !", Toast.LENGTH_SHORT).show()
-        } else {
+        if(stepsSensor != null)
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
-        }
-        getLastSteps()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        sendEvent("Sensor", "ACTIVO", "Step sensor running in background")
+        getLastSteps()
+        setThemeText()
     }
 
     override fun onStop() {
@@ -149,9 +151,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-    override fun onSensorChanged(event: SensorEvent) {
+    override fun onStepSensorChangedTriggered(event: SensorEvent) {
         if (running) {
             Log.d("Steps", event.values[0].toString())
             val stepsPerDay: TreeMap<Int, Float> =
@@ -179,6 +179,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
         } else {
             stepsPerDay[dayOfYear] = realSteps
         }
+
         if(stepsPerDay[dayOfYear]!! == STEPS_GOAL){
             sendNotification("Congratulations!","You have reach " + stepsPerDay[dayOfYear] + " steps")
             sendEvent("Sensor", "ACTIVO", "Step sensor reach 500 steps in a day")
@@ -234,5 +235,14 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 Color.parseColor("#000000")
             )
         )
+    }
+
+    private fun setThemeText() {
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ||
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            _themeText!!.text = "Dark theme"
+        } else {
+            _themeText!!.text = "Light theme"
+        }
     }
 }

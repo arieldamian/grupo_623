@@ -38,13 +38,13 @@ object AppPreferences {
         }
 
     var totalSteps: Float
-        get() = (preferences.getFloat(TOTAL_STEPS.first, TOTAL_STEPS.second) ?: "") as Float
+        get() = (preferences.getFloat(TOTAL_STEPS.first, TOTAL_STEPS.second))
         set(value) = preferences.edit {
             it.putFloat(TOTAL_STEPS.first, value)
         }
 
     var lastDaySteps: Float
-        get() = (preferences.getFloat(LAST_DAY_STEPS.first, LAST_DAY_STEPS.second) ?: "") as Float
+        get() = (preferences.getFloat(LAST_DAY_STEPS.first, LAST_DAY_STEPS.second))
         set(value) = preferences.edit {
             it.putFloat(LAST_DAY_STEPS.first, value)
         }

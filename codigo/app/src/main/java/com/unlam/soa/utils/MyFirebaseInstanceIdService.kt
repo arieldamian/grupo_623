@@ -66,7 +66,7 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService(){
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
         val message = gson.fromJson(remoteMessage.data.values.elementAt(0),MessageResponse::class.java)
         notificationBuilder.setAutoCancel(true)
-            .setColor(ContextCompat.getColor(this, R.color.colorAccent))
+            .setColor(ContextCompat.getColor(this, R.color.design_default_color_primary))
             .setContentTitle("FitSOA- " + message.title)
             .setContentText(message.message)
             .setDefaults(Notification.DEFAULT_ALL)
