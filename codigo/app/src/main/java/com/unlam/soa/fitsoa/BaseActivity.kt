@@ -116,11 +116,12 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
             if (event.sensor.type == Sensor.TYPE_LIGHT) {
                 val value: Float = event.values[0]
                 val nightMode: Int = AppCompatDelegate.getDefaultNightMode()
-                sendEvent("Sensor","ACTIVO", "Light sensor changed - Theme updated")
                 if (value < 3 && nightMode != AppCompatDelegate.MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    sendEvent("Sensor","ACTIVO", "Night sensor changed - Theme updated")
                 } else if (value > 10 && nightMode != AppCompatDelegate.MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    sendEvent("Sensor","ACTIVO", "Light sensor changed - Theme updated")
                 }
             } else {
                 onStepSensorChangedTriggered(event)
