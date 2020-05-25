@@ -20,7 +20,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.unlam.soa.sharedPreferences.AppPreferences
-import com.unlam.soa.utils.MyFirebaseInstanceIdService
 import com.unlam.soa.utils.MyFirebaseInstanceIdService.Companion.sendNotification
 import org.eazegraph.lib.charts.BarChart
 import org.eazegraph.lib.charts.PieChart
@@ -130,7 +129,7 @@ class MainActivity : BaseActivity() {
         checkLogin()
 
         running = true
-        if(stepsSensor != null)
+        if (stepsSensor != null)
             sensorManager?.registerListener(this, stepsSensor, SensorManager.SENSOR_DELAY_FASTEST)
 
         getLastSteps()
@@ -180,16 +179,18 @@ class MainActivity : BaseActivity() {
             stepsPerDay[dayOfYear] = realSteps
         }
 
-        if(stepsPerDay[dayOfYear]!! == STEPS_GOAL){
-            sendNotification("Congratulations!","You have reach " + stepsPerDay[dayOfYear] + " steps")
-            sendEvent("Sensor", "ACTIVO", "Step sensor reach 500 steps in a day")
+        if (stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
+            sendNotification("Congratulations!", "You have reach ${stepsPerDay[dayOfYear]?.toInt()} steps")
+            sendEvent(
+                "Sensor",
+                "ACTIVO",
+                "Step sensor reach ${stepsPerDay[dayOfYear]} steps in a day"
+            )
         }
         storeStepsPerDay(stepsPerDay)
     }
 
     private fun storeStepsPerDay(stepsPerDay: TreeMap<Int, Float>) {
-        // convert map to JSON String
-
         val builder = GsonBuilder()
         val gson = builder.enableComplexMapKeySerialization().setPrettyPrinting().create()
         val type: Type = object : TypeToken<TreeMap<Int?, Float?>?>() {}.type
@@ -239,7 +240,8 @@ class MainActivity : BaseActivity() {
 
     private fun setThemeText() {
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ||
-            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+        ) {
             _themeText!!.text = "Dark theme"
         } else {
             _themeText!!.text = "Light theme"
