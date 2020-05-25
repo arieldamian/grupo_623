@@ -1,8 +1,12 @@
 package com.unlam.soa.api
 
+import com.google.firebase.messaging.RemoteMessage
+import com.unlam.soa.api.ApiConstants.AUTHORIZATION_FIREBASE_HEADER
 import com.unlam.soa.api.ApiConstants.BASE_URL
 import com.unlam.soa.api.ApiConstants.CONTENT_TYPE_HEADER
+import com.unlam.soa.fitsoa.BuildConfig
 import com.unlam.soa.models.EventBody
+import com.unlam.soa.models.NotificationBody
 import com.unlam.soa.models.SignInBody
 import com.unlam.soa.models.UserBody
 import com.unlam.soa.sharedPreferences.AppPreferences
@@ -16,11 +20,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
-import java.util.*
 
 object ApiConstants {
     const val BASE_URL: String = "http://so-unlam.net.ar/api/api/"
     const val CONTENT_TYPE_HEADER = "Content-Type:application/json"
+    const val AUTHORIZATION_FIREBASE_HEADER = "Authorization:key="+ BuildConfig.SERVER_KEY
+
 }
 
 data class ResponseLogin(
@@ -42,6 +47,20 @@ data class ResponseEvent(
     val event: Any
 )
 
+data class ResponseNotification(
+    val multicast_id: Long,
+    val success: Int,
+    val failure: Int,
+    val canonical_ids: Int,
+    val results: Any
+)
+
+data class MessageResponse(
+    val title: String,
+    val message: String
+)
+
+
 interface ApiInterface {
     @Headers(CONTENT_TYPE_HEADER)
     @POST("login")
@@ -54,6 +73,10 @@ interface ApiInterface {
     @Headers(CONTENT_TYPE_HEADER)
     @POST("event")
     fun registerEvent(@Body info: EventBody): Call<ResponseEvent>
+
+    @Headers(CONTENT_TYPE_HEADER,AUTHORIZATION_FIREBASE_HEADER)
+    @POST("send")
+    fun sendNotification(@Body info: NotificationBody): Call<ResponseNotification>
 }
 
 class RetrofitInstance {
@@ -93,6 +116,7 @@ class ServiceInterceptor : Interceptor{
                 .addHeader("token",token)
                 .build()
         }
+
 
         return chain.proceed(request)
     }

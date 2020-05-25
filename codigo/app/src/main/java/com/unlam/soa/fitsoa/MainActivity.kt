@@ -21,6 +21,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.unlam.soa.sharedPreferences.AppPreferences
+import com.unlam.soa.utils.MyFirebaseInstanceIdService
+import com.unlam.soa.utils.MyFirebaseInstanceIdService.Companion.sendNotification
 import org.eazegraph.lib.charts.BarChart
 import org.eazegraph.lib.charts.PieChart
 import org.eazegraph.lib.models.BarModel
@@ -30,6 +32,7 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 val STEPS_KM = 0.00076
+val STEPS_GOAL = 500.0f
 
 class MainActivity : BaseActivity(), SensorEventListener {
 
@@ -176,9 +179,10 @@ class MainActivity : BaseActivity(), SensorEventListener {
         } else {
             stepsPerDay[dayOfYear] = realSteps
         }
-        if(stepsPerDay[dayOfYear]!! > 500.0f)
-            sendEvent("Sensor", "ACTIVO", "Step sensor reach 100 steps in a day")
-
+        if(stepsPerDay[dayOfYear]!! == STEPS_GOAL){
+            sendNotification("Congratulations!","You have reach " + stepsPerDay[dayOfYear] + " steps")
+            sendEvent("Sensor", "ACTIVO", "Step sensor reach 500 steps in a day")
+        }
         storeStepsPerDay(stepsPerDay)
     }
 
@@ -204,7 +208,7 @@ class MainActivity : BaseActivity(), SensorEventListener {
                 days--
                 _barChart!!.addBar(bm);
             }
-            for (i in days downTo 0 step 1) {
+            for (i in days downTo 1 step 1) {
                 bm = BarModel("Day $days", 0.0f, Color.parseColor("#99CC00"))
                 days--
                 _barChart!!.addBar(bm);

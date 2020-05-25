@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "751968270039",
+    "firebase_url": "https://fitsoa-ada87.firebaseio.com",
+    "project_id": "fitsoa-ada87",
+    "storage_bucket": "fitsoa-ada87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751968270039:android:7825831f2e226513d26292",
+        "android_client_info": {
+          "package_name": "com.unlam.soa.fitsoa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "751968270039-n8sq1i6kc9g752r4p2tuu7pat6sq7dse.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unlam.soa.fitsoa",
+            "certificate_hash": "9a77aca83b5ec4b6635bf4cc2cf26e8d4f81cdaf"
+          }
+        },
+        {
+          "client_id": "751968270039-g75bprs6b05ctmuotgb1ja2am435ksfg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5IgxbaxM-684oXkNij4eyj7F8VZNvI0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "751968270039-g75bprs6b05ctmuotgb1ja2am435ksfg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
