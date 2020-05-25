@@ -18,6 +18,7 @@ import com.unlam.soa.api.ApiInterface
 import com.unlam.soa.api.ResponseEvent
 import com.unlam.soa.api.RetrofitInstance
 import com.unlam.soa.models.EventBody
+import com.unlam.soa.sharedPreferences.AppPreferences
 import com.unlam.soa.utils.Utils
 import org.json.JSONObject
 import retrofit2.Call
@@ -58,6 +59,8 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun sendEvent(type: String, state: String, description: String) {
+        if (AppPreferences.token == "") return
+
         val retIn = RetrofitInstance.getRetrofitInstance().create(ApiInterface::class.java)
         val eventInfo = EventBody(type, state, description)
 
@@ -98,7 +101,6 @@ open class BaseActivity : AppCompatActivity(), SensorEventListener {
         unregisterReceiver(broadcastReceiver)
         sensorManager?.unregisterListener(this)
         sendEvent("Sensor","INACTIVO", "Light sensor was unregistered")
-
     }
 
     override fun onResume() {
