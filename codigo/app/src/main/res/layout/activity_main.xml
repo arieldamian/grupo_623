@@ -1,102 +1,107 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:eaze="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:id="@+id/averageandtotal"
+    <RelativeLayout
+        xmlns:eaze="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/steps"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp">
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        tools:context=".MainActivity">
+        <LinearLayout
+            android:id="@+id/averageandtotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/steps"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/average"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/averageandtotaltext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/averageandtotal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/average" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/total" />
+        </LinearLayout>
+
+        <org.eazegraph.lib.charts.PieChart
+            android:id="@+id/steps"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
+            eaze:egEmptyDataText="36dp"
+            eaze:egHighlightStrength="1"
+            eaze:egInnerPadding="75"
+            eaze:egLegendTextSize="24dp"
+            eaze:egValueTextSize="36dp" />
 
         <TextView
-            android:id="@+id/average"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_below="@+id/averageandtotaltext"
+            android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
-            android:textSize="20sp"
+            android:text="@string/lastsevendays"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/total"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        <org.eazegraph.lib.charts.BarChart
+            android:id="@+id/bargraph"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_below="@+id/averageandtotaltext"
+            android:layout_marginTop="50dp"
+            eaze:egLegendHeight="35dp"
+            eaze:egShowValues="true"/>
 
-    <LinearLayout
-        android:id="@+id/averageandtotaltext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/averageandtotal">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@id/bargraph"
+            android:layout_margin="10dp"
+            >
+            <TextView
+                android:id="@+id/theme"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="@string/average" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="@string/total" />
-    </LinearLayout>
-
-    <org.eazegraph.lib.charts.PieChart
-        android:id="@+id/steps"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="32dp"
-        android:padding="8dp"
-        eaze:egEmptyDataText="36dp"
-        eaze:egHighlightStrength="1"
-        eaze:egInnerPadding="75"
-        eaze:egLegendTextSize="24dp"
-        eaze:egValueTextSize="36dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/averageandtotaltext"
-        android:layout_marginTop="24dp"
-        android:gravity="center_horizontal"
-        android:text="@string/lastsevendays"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <org.eazegraph.lib.charts.BarChart
-        android:id="@+id/bargraph"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_below="@+id/averageandtotaltext"
-        android:layout_marginTop="50dp"
-        eaze:egLegendHeight="35dp"
-        eaze:egShowValues="true"/>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_below="@id/bargraph"
-        android:layout_margin="10dp"
-        >
-        <TextView
-            android:id="@+id/theme"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </androidx.cardview.widget.CardView>
-
-</RelativeLayout>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>
