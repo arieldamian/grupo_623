@@ -93,7 +93,7 @@ class MainActivity : BaseActivity() {
         _stepsChart?.addPieSlice(
             PieModel(
                 "Today Steps",
-                 0.0f,
+                0.0f,
                 Color.parseColor("#000000")
             )
         )
