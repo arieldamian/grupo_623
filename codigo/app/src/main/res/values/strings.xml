@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">FitSOA</string>
-    <string name="testtest">testtest</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="login">Login</string>

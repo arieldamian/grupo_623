@@ -93,7 +93,7 @@ class MainActivity : BaseActivity() {
         _stepsChart?.addPieSlice(
             PieModel(
                 "Today Steps",
-                0.0f,
+                 0.0f,
                 Color.parseColor("#000000")
             )
         )
@@ -172,7 +172,7 @@ class MainActivity : BaseActivity() {
             stepsPerDay[dayOfYear] = realSteps
         }
 
-        if (stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
+        if (stepsPerDay[dayOfYear]!! != 0f && stepsPerDay[dayOfYear]!! % STEPS_GOAL == 0f) {
             sendNotification(
                 "Congratulations!",
                 "You have reach ${stepsPerDay[dayOfYear]?.toInt()} steps"
@@ -250,13 +250,18 @@ class MainActivity : BaseActivity() {
             val stepsPerDay: TreeMap<Int, Float> =
                 getStepsPerDay().toSortedMap(reverseOrder()) as TreeMap<Int, Float>
             checkSteps(event.values[0])
-            AppPreferences.totalSteps = event.values[0]
+
+            if (event.values[0] < AppPreferences.totalSteps) {
+                AppPreferences.totalSteps += event.values[0]
+            } else {
+                AppPreferences.totalSteps = event.values[0]
+            }
 
             generateBarChart()
             generatePieChart(stepsPerDay);
 
             _averageText!!.text =
-                "%.2f".format((AppPreferences.totalSteps / stepsPerDay.size) * STEPS_KM)
+                "%.2f".format((AppPreferences.totalSteps / if (stepsPerDay.size == 0) 1 else stepsPerDay.size) * STEPS_KM)
             _totalStepsText!!.text = "%.2f".format((AppPreferences.totalSteps) * STEPS_KM)
         }
     }

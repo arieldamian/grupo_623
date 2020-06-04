@@ -71,7 +71,7 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService(){
             .setContentText(message.message)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
-            .setSmallIcon(R.drawable.kotlindroider)
+            .setSmallIcon(R.drawable.fitsoa)
             .setAutoCancel(true)
 
 
