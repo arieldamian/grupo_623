@@ -24,7 +24,7 @@ android {
         }
 
         buildTypes.each {
-            it.buildConfigField "String", "API_ENV", "\"TEST\""
+            it.buildConfigField "String", "API_ENV", "\"DEV\""
             it.buildConfigField "String", "SERVER_KEY", "\"AAAArxTNNtc:APA91bH3RNxFmfHCHOYcbqPJ8TsXk9eKC0AUz2tCmbdZo0UIUZ4cdjNdbrJ-XPYY1OTfqtDVPbKiLPcTLo51oQ2dLng5rbKAYFzDgnd1g19Gp6AZGRa4xZl3UvJtqc-emPSnmKWwaRoW\""
         }
     }
